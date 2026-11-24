@@ -1,0 +1,17 @@
+# Devin environment blueprint for SIGNAL (git-managed).
+# Applies automatically to future Devin sessions on this repo.
+initialize:
+  - uses: github.com/actions/setup-node@v4
+    with:
+      node-version: "24"
+  - run: docker compose up -d
+  - run: cp .env.example apps/web/.env
+  - run: npm install
+  - run: npm run db:migrate --workspace @signal/db
+  - run: npm run db:seed --workspace @signal/db
+  - run: npm run sdk:build
+maintenance:
+  - run: npm test --workspaces --if-present
+knowledge:
+  - name: quickstart
+    run: cat README.md
